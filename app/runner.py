@@ -1,6 +1,7 @@
 from app.models import AwsScanContext
 from app.aws_session import create_scan_context
 from app.reporting import build_report, utc_now, write_json_report
+from app.checks import s3
 
 
 def run_scan() -> AwsScanContext:
@@ -8,11 +9,12 @@ def run_scan() -> AwsScanContext:
     Current MVP responsibilities:
     - initialize AWS scan context
     - capture scan timing metadata
+    - execute enabled security checks
+    - attach normalized findings to the scan context
     - build canonical report structure
     - write local JSON report output
 
     Future responsibilities include:
-    - service check orchestration
     - error handling and partial scan recovery
     - CSV export support
     - S3 report upload
@@ -20,8 +22,21 @@ def run_scan() -> AwsScanContext:
     - execution metrics
     """
 
-    context = create_scan_context()
     started_at = utc_now()
+
+    context = create_scan_context()
+
+    findings = []
+    findings.extend(
+        s3.run(
+            session=context.session,
+            account_id=context.account_id,
+            region=None,
+        )
+    )
+
+    context.findings.extend(findings)
+
     completed_at = utc_now()
 
     report = build_report(
