@@ -1,9 +1,9 @@
-from app.aws_session import create_scan_context
+from app.runner import run_scan
 
 
 def main() -> None:
-    context = create_scan_context()
-    
+    context = run_scan()
+
     print("AWS Security Posture Scanner MVP")
     print(f"Account ID: {context.account_id}")
     print(f"Regions: {', '.join(context.regions)}")

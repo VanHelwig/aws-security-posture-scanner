@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 import boto3
 
+
 @dataclass
 class Finding:
     finding_id: str
@@ -17,7 +18,8 @@ class Finding:
     remediation: str
     evidence: dict
     observed_at: str
-     
+
+
 @dataclass(frozen=True)
 class AwsScanContext:
     session: boto3.Session
