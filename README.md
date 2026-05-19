@@ -10,27 +10,42 @@ Current development focuses on disciplined architecture, explicit contracts, and
 
 ## Current MVP Features
 
+### Scanner Functionality
+
 - AWS account scanning with boto3
 - S3 Public Access Block inspection
 - Deterministic finding ID generation
 - Canonical JSON report generation
 - Local JSON report persistence
+- Modular service-scoped check architecture
+
+### Report Storage and Logging
+
 - Optional S3 report upload
+- CloudWatch runtime log streaming
+- Structured runtime execution logging
+
+### Container and Runtime Execution
+
 - Podman container execution
 - Non-root container runtime
+- ECS Fargate task execution
+- ECS task execution workflow
+- Makefile-based ECS task execution
+
+### Terraform-Managed Infrastructure
+
 - Terraform-managed S3 infrastructure
 - Terraform-managed ECR infrastructure
 - Terraform-managed CloudWatch Logs infrastructure
-- ECR container push workflow
-- Makefile-based development workflows
-- Modular check architecture
-- ECS Fargate task execution
 - Terraform-managed ECS infrastructure
 - Terraform-managed IAM infrastructure
 - Terraform-managed networking infrastructure
-- CloudWatch runtime log streaming
-- ECS task execution workflow
-- Makefile-based ECS task execution
+
+### Development Tooling
+
+- Makefile-based development workflows
+- ECR container push workflow
 
 ---
 
