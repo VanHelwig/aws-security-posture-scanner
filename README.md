@@ -2,7 +2,7 @@
 
 A lightweight AWS security assessment platform focused on deterministic findings, normalized reporting, and modular cloud security checks.
 
-The project is designed as a realistic cloud security engineering system rather than a commercial CSPM replacement. The scanner performs read-only AWS API inspection using boto3, normalizes findings into stable schemas, generates machine-readable reports, and supports containerized execution for future ECS/Fargate deployment.
+The project is designed as a realistic cloud security engineering system rather than a commercial CSPM replacement. The scanner performs read-only AWS API inspection using boto3, normalizes findings into stable schemas, generates machine-readable reports, and supports containerized execution for ECS/Fargate deployment. The current MVP has successfully validated end-to-end ECS Fargate execution, including ECR image pulls, CloudWatch log streaming, IAM task-role authentication, and S3 report uploads.
 
 Current development focuses on disciplined architecture, explicit contracts, and extensibility over feature quantity.
 
@@ -24,6 +24,13 @@ Current development focuses on disciplined architecture, explicit contracts, and
 - ECR container push workflow
 - Makefile-based development workflows
 - Modular check architecture
+- ECS Fargate task execution
+- Terraform-managed ECS infrastructure
+- Terraform-managed IAM infrastructure
+- Terraform-managed networking infrastructure
+- CloudWatch runtime log streaming
+- ECS task execution workflow
+- Makefile-based ECS task execution
 
 ---
 
@@ -39,7 +46,7 @@ Podman Container Runtime
 Amazon ECR
         |
         v
-Future ECS/Fargate Runtime
+ECS/Fargate Runtime
         |
         v
 Read-Only AWS API Calls
@@ -76,8 +83,12 @@ aws-security-posture-scanner/
 │   └── envs/
 │       └── dev/
 │           ├── ecr.tf
+│           ├── ecs.tf
+│           ├── iam.tf
 │           ├── logs.tf
+│           ├── network.tf
 │           ├── outputs.tf
+│           ├── providers.tf
 │           ├── s3.tf
 │           └── variables.tf
 ├── Dockerfile
@@ -146,7 +157,7 @@ Example local credential validation:
 aws sts get-caller-identity
 ```
 
-Future ECS/Fargate execution will use task-role authentication rather than mounted credential files.
+ECS/Fargate execution uses IAM task-role authentication rather than mounted credential files.
 
 ### Local Container Credential Notes
 
@@ -252,6 +263,27 @@ make container-release-ecr
 
 ---
 
+## ECS Runtime Execution
+
+Run the scanner as an ECS Fargate task:
+
+```bash
+make ecs-run-task
+```
+
+This workflow:
+
+- retrieves runtime network configuration from Terraform outputs
+- launches a Fargate task
+- pulls the scanner image from ECR
+- streams logs to CloudWatch
+- uploads reports to S3
+- exits cleanly after scan completion
+
+Successful execution returns the ECS task ARN.
+
+---
+
 ## Terraform Development Fixtures
 
 The repository also includes Terraform-managed development fixtures used to validate scanner behavior against intentionally configured AWS resources.
@@ -278,12 +310,16 @@ Current Terraform-managed runtime infrastructure includes:
 - S3 report storage
 - ECR container registry
 - CloudWatch Logs infrastructure
+- IAM task execution role
+- IAM scanner task role
+- ECS cluster
+- ECS Fargate task definition
+- ECS task security group
+- Default VPC discovery for MVP networking
 
 Future runtime infrastructure will include:
 
-- ECS/Fargate execution
 - EventBridge scheduling
-- IAM task and execution roles
 
 The project intentionally avoids reusable Terraform modules during the MVP phase in order to prioritize explicit infrastructure visibility and reduced abstraction complexity.
 
@@ -291,7 +327,7 @@ The project intentionally avoids reusable Terraform modules during the MVP phase
 
 ## CloudWatch Logging Infrastructure
 
-The project includes Terraform-managed CloudWatch Logs infrastructure intended for future ECS/Fargate runtime execution.
+The project includes Terraform-managed CloudWatch Logs infrastructure used by ECS/Fargate runtime execution.
 
 Current logging characteristics:
 
@@ -306,7 +342,7 @@ Current log group naming convention:
 /ecs/aws-security-posture-scanner-dev
 ```
 
-Future ECS task definitions will use the `awslogs` log driver to emit runtime logs into this log group.
+ECS task definitions use the `awslogs` log driver to emit runtime logs into this log group.
 
 ---
 
@@ -324,10 +360,8 @@ Future ECS task definitions will use the `awslogs` log driver to emit runtime lo
 
 ## Planned Features
 
-- Additional AWS service checks
-- ECS/Fargate scheduled execution
 - EventBridge scheduling
-- ECS runtime log integration
+- Additional AWS service checks
 - Structured JSON logging
 - CloudWatch metrics and alarms
 - CI/CD pipeline integration

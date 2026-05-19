@@ -66,6 +66,17 @@ container-push-ecr:
 .PHONY: container-release-ecr
 container-release-ecr: ecr-login container-build-ecr container-push-ecr
 
+.PHONY: ecs-run-task
+ecs-run-task:
+	@echo "Starting ECS scanner task..."
+	@aws ecs run-task \
+		--cluster $(IMAGE_NAME)-$(ENVIRONMENT) \
+		--launch-type FARGATE \
+		--task-definition $(IMAGE_NAME)-$(ENVIRONMENT) \
+		--network-configuration "$$(terraform -chdir=$(TERRAFORM_ENV_DIR) output -json ecs_run_network_configuration)" \
+		--query 'tasks[0].taskArn' \
+		--output text
+
 .PHONY: terraform-init
 terraform-init:
 	terraform -chdir=$(TERRAFORM_ENV_DIR) init
