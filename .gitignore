@@ -1,14 +1,30 @@
-output/
-
+# Python
 .venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 *.egg-info/
+
+# Testing / linting
 .pytest_cache/
 .ruff_cache/
-.infra_notes.txt
+
+# Local scanner output
+output/
+
+# Terraform
 .terraform/
 *.tfstate
 *.tfstate.*
 *.tfvars
 .terraform.lock.hcl
+
+# IDE / editor
+.vscode/
+
+# OS files
+.DS_Store
+
+# Local notes
+.infra_notes.txt
