@@ -5,3 +5,7 @@ output "report_bucket_name" {
 output "ecr_repository_url" {
   value = aws_ecr_repository.scanner.repository_url
 }
+
+output "cloudwatch_log_group_name" {
+  value = aws_cloudwatch_log_group.scanner_runtime.name
+}

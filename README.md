@@ -14,10 +14,15 @@ Current development focuses on disciplined architecture, explicit contracts, and
 - S3 Public Access Block inspection
 - Deterministic finding ID generation
 - Canonical JSON report generation
+- Local JSON report persistence
 - Optional S3 report upload
 - Podman container execution
 - Non-root container runtime
-- Terraform-managed development fixtures
+- Terraform-managed S3 infrastructure
+- Terraform-managed ECR infrastructure
+- Terraform-managed CloudWatch Logs infrastructure
+- ECR container push workflow
+- Makefile-based development workflows
 - Modular check architecture
 
 ---
@@ -31,6 +36,12 @@ Local Development / CI
 Podman Container Runtime
         |
         v
+Amazon ECR
+        |
+        v
+Future ECS/Fargate Runtime
+        |
+        v
 Read-Only AWS API Calls
         |
         v
@@ -41,6 +52,8 @@ JSON Reports
         |
         v
 Optional S3 Report Upload
+
+CloudWatch Logs receives ECS/Fargate runtime execution logs.
 ```
 
 ---
@@ -60,6 +73,13 @@ aws-security-posture-scanner/
 │   └── s3_writer.py
 ├── tests/
 ├── terraform/
+│   └── envs/
+│       └── dev/
+│           ├── ecr.tf
+│           ├── logs.tf
+│           ├── outputs.tf
+│           ├── s3.tf
+│           └── variables.tf
 ├── Dockerfile
 ├── Makefile
 ├── pyproject.toml
@@ -198,6 +218,12 @@ Run with S3 report upload enabled:
 make container-run-s3 REPORT_BUCKET=my-report-bucket
 ```
 
+Build and push a container image to ECR:
+
+```bash
+make container-release-ecr
+```
+
 ---
 
 ## Example Report Structure
@@ -226,12 +252,59 @@ make container-run-s3 REPORT_BUCKET=my-report-bucket
 
 ## Terraform Development Fixtures
 
-The repository includes Terraform-managed development fixtures used to validate scanner behavior against intentionally configured AWS resources.
+The repository also includes Terraform-managed development fixtures used to validate scanner behavior against intentionally configured AWS resources.
 
 Current fixtures include:
 
 - private S3 bucket
 - intentionally misconfigured S3 bucket for Public Access Block testing
+
+Future fixtures may include intentionally insecure IAM, EC2, and networking configurations for scanner validation testing.
+
+---
+
+## Terraform Runtime Infrastructure
+
+Infrastructure is currently managed directly within:
+
+```text
+terraform/envs/dev/
+```
+
+Current Terraform-managed runtime infrastructure includes:
+
+- S3 report storage
+- ECR container registry
+- CloudWatch Logs infrastructure
+
+Future runtime infrastructure will include:
+
+- ECS/Fargate execution
+- EventBridge scheduling
+- IAM task and execution roles
+
+The project intentionally avoids reusable Terraform modules during the MVP phase in order to prioritize explicit infrastructure visibility and reduced abstraction complexity.
+
+---
+
+## CloudWatch Logging Infrastructure
+
+The project includes Terraform-managed CloudWatch Logs infrastructure intended for future ECS/Fargate runtime execution.
+
+Current logging characteristics:
+
+- deterministic ECS-oriented naming
+- environment-scoped log groups
+- 14-day retention policy
+- low-cost MVP operational posture
+
+Current log group naming convention:
+
+```text
+/ecs/aws-security-posture-scanner-dev
+```
+
+Future ECS task definitions will use the `awslogs` log driver to emit runtime logs into this log group.
 
 ---
 
@@ -252,7 +325,9 @@ Current fixtures include:
 - Additional AWS service checks
 - ECS/Fargate scheduled execution
 - EventBridge scheduling
-- CloudWatch structured logging
+- ECS runtime log integration
+- Structured JSON logging
+- CloudWatch metrics and alarms
 - CI/CD pipeline integration
 - Expanded Terraform infrastructure
 - Multi-region scanning support
