@@ -1,9 +1,13 @@
+import logging
+
 from app.models import AwsScanContext
 from app.aws_session import create_scan_context
 from app.reporting import build_report, utc_now, write_json_report
 from app.checks import s3
 from app.config import settings
 from app.s3_writer import upload_json_report
+
+logger = logging.getLogger(__name__)
 
 
 def run_scan() -> AwsScanContext:
@@ -51,7 +55,7 @@ def run_scan() -> AwsScanContext:
 
     report_path = write_json_report(report)
 
-    print(f"Report written: {report_path}")
+    logger.info("report written: %s", report_path)
 
     if settings.report_bucket:
         object_key = upload_json_report(
@@ -60,8 +64,14 @@ def run_scan() -> AwsScanContext:
             report_path=report_path,
             report=report,
         )
-        print(f"Report uploaded: s3://{settings.report_bucket}/{object_key}")
+
+        logger.info(
+            "report uploaded: s3://%s/%s",
+            settings.report_bucket,
+            object_key,
+        )
+
     else:
-        print("S3 upload skipped: REPORT_BUCKET is not configured")
+        logger.info("s3 upload skipped: REPORT_BUCKET is not configured")
 
     return context
