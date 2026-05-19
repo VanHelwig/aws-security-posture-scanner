@@ -1,6 +1,14 @@
 IMAGE_NAME := aws-security-posture-scanner
-IMAGE_TAG := local
-REPORT_BUCKET ?=
+IMAGE_TAG ?= local
+AWS_REGION ?= us-east-1
+ENVIRONMENT ?= dev
+AWS_ACCOUNT_ID ?= $(shell aws sts get-caller-identity --query Account --output text)
+
+ECR_REPOSITORY := $(IMAGE_NAME)-$(ENVIRONMENT)
+ECR_REGISTRY := $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+ECR_IMAGE_TAG ?= latest
+ECR_IMAGE_URI := $(ECR_REGISTRY)/$(ECR_REPOSITORY):$(ECR_IMAGE_TAG)
+TERRAFORM_ENV_DIR := terraform/envs/$(ENVIRONMENT)
 
 .PHONY: install
 install:
@@ -26,6 +34,11 @@ run:
 container-build:
 	podman build -t $(IMAGE_NAME):$(IMAGE_TAG) .
 
+.PHONY: container-build-ecr
+container-build-ecr: 
+	podman build -t $(IMAGE_NAME):$(ECR_IMAGE_TAG) .
+	podman tag $(IMAGE_NAME):$(ECR_IMAGE_TAG) $(ECR_IMAGE_URI)
+
 .PHONY: container-run
 container-run:
 	podman run --rm \
@@ -40,6 +53,38 @@ container-run-s3:
 		-e REPORT_BUCKET=$(REPORT_BUCKET) \
 		-v "$$HOME/.aws:/home/scanner/.aws:ro,Z" \
 		$(IMAGE_NAME):$(IMAGE_TAG)
+
+.PHONY: ecr-login
+ecr-login: 
+	aws ecr get-login-password --region $(AWS_REGION) | \
+	podman login --username AWS --password-stdin $(ECR_REGISTRY)	
+
+.PHONY: container-push-ecr
+container-push-ecr:
+	podman push $(ECR_IMAGE_URI)
+
+.PHONY: container-release-ecr
+container-release-ecr: ecr-login container-build-ecr container-push-ecr
+
+.PHONY: terraform-init
+terraform-init:
+	terraform -chdir=$(TERRAFORM_ENV_DIR) init
+
+.PHONY: terraform-validate
+terraform-validate:
+	terraform -chdir=$(TERRAFORM_ENV_DIR) validate
+
+.PHONY: terraform-plan
+terraform-plan:
+	terraform -chdir=$(TERRAFORM_ENV_DIR) plan
+
+.PHONY: terraform-apply
+terraform-apply:
+	terraform -chdir=$(TERRAFORM_ENV_DIR) apply
+
+.PHONY: terraform-destroy
+terraform-destroy:
+	terraform -chdir=$(TERRAFORM_ENV_DIR) destroy
 
 .PHONY: terraform-fmt
 terraform-fmt:
