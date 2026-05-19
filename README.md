@@ -93,7 +93,7 @@ aws-security-posture-scanner/
 | `app/` | Scanner application source code |
 | `app/checks/` | Modular AWS security checks |
 | `tests/` | Unit tests and mocked boto3 validation |
-| `terraform/` | Infrastructure and development fixtures |
+| `terraform/` | Runtime infrastructure and scanner validation fixtures |
 | `output/` | Local generated reports (gitignored) |
 
 ---
@@ -173,6 +173,8 @@ aws sts get-caller-identity
 | --- | --- |
 | `REPORT_BUCKET` | Optional S3 upload destination |
 | `AWS_PROFILE` | Local AWS CLI profile for boto3 authentication |
+| `AWS_REGION` | AWS region used for local scanner execution. Defaults to `us-east-1`. |
+| `LOG_LEVEL` | Runtime logging level. Defaults to `INFO`. |
 
 ---
 
