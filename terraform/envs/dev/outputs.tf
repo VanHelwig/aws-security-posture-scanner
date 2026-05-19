@@ -9,3 +9,11 @@ output "ecr_repository_url" {
 output "cloudwatch_log_group_name" {
   value = aws_cloudwatch_log_group.scanner_runtime.name
 }
+
+output "ecs_task_execution_role_arn" {
+  value = aws_iam_role.ecs_task_execution.arn
+}
+
+output "scanner_task_role_arn" {
+  value = aws_iam_role.scanner_task.arn
+}
