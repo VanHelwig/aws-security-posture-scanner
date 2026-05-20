@@ -25,13 +25,12 @@ Current development focuses on disciplined architecture, explicit contracts, and
 - CloudWatch runtime log streaming
 - Structured runtime execution logging
 
-### Container and Runtime Execution
+### Containerized Runtime
 
 - Podman container execution
 - Non-root container runtime
-- ECS Fargate task execution
-- ECS task execution workflow
-- Makefile-based ECS task execution
+- ECS Fargate execution
+- Cloud-native stateless execution model
 
 ### Terraform-Managed Infrastructure
 
@@ -46,6 +45,7 @@ Current development focuses on disciplined architecture, explicit contracts, and
 
 - Makefile-based development workflows
 - ECR container push workflow
+- ECS task execution automation
 
 ---
 
