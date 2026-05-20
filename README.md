@@ -86,6 +86,7 @@ CloudWatch Logs receives ECS/Fargate runtime execution logs.
 aws-security-posture-scanner/
 ├── app/
 │   ├── checks/
+│   │   └── s3.py
 │   ├── aws_session.py
 │   ├── config.py
 │   ├── main.py
@@ -387,4 +388,4 @@ ECS task definitions use the `awslogs` log driver to emit runtime logs into this
 
 ## License
 
-This project is licensed under the terms defined in the repository LICENSE file.
+This project is licensed under the MIT License. See the repository LICENSE file for details.
