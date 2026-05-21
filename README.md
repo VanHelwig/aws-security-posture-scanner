@@ -97,6 +97,7 @@ CloudWatch Logs receives runtime and orchestration logs.
 aws-security-posture-scanner/
 ├── app/
 │   ├── checks/
+│   │   ├── iam.py
 │   │   └── s3.py
 │   ├── aws_session.py
 │   ├── config.py
