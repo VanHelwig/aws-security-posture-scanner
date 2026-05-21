@@ -47,3 +47,15 @@ output "ecs_run_network_configuration" {
     }
   }
 }
+
+output "scanner_schedule_rule_name" {
+  value = aws_cloudwatch_event_rule.scanner_schedule.name
+}
+
+output "scanner_schedule_rule_state" {
+  value = aws_cloudwatch_event_rule.scanner_schedule.state
+}
+
+output "eventbridge_ecs_run_task_role_arn" {
+  value = aws_iam_role.eventbridge_ecs_run_task.arn
+}

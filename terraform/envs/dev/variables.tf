@@ -13,3 +13,15 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
 }
+
+variable "scanner_schedule_expression" {
+  description = "EventBridge schedule expression for recurring scanner execution."
+  type        = string
+  default     = "rate(1 day)"
+}
+
+variable "scanner_schedule_enabled" {
+  description = "Whether the EventBridge scanner schedule is enabled."
+  type        = bool
+  default     = false
+}
