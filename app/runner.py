@@ -3,7 +3,7 @@ import logging
 from app.models import AwsScanContext
 from app.aws_session import create_scan_context
 from app.reporting import build_report, utc_now, write_json_report
-from app.checks import s3
+from app.checks import iam, s3
 from app.config import settings
 from app.s3_writer import upload_json_report
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def run_scan() -> AwsScanContext:
     """Execute the scanner orchestration lifecycle.
-    Current MVP responsibilities:
+    Current responsibilities:
     - initialize AWS scan context
     - capture scan timing metadata
     - execute enabled security checks
@@ -35,6 +35,13 @@ def run_scan() -> AwsScanContext:
     findings = []
     findings.extend(
         s3.run(
+            session=context.session,
+            account_id=context.account_id,
+            region=None,
+        )
+    )
+    findings.extend(
+        iam.run(
             session=context.session,
             account_id=context.account_id,
             region=None,
