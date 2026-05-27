@@ -108,6 +108,9 @@ CloudWatch Logs receives runtime and orchestration logs.
 
 ```text
 aws-security-posture-scanner/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── app/
 │   ├── checks/
 │   │   ├── cloudtrail.py
@@ -120,7 +123,7 @@ aws-security-posture-scanner/
 │   ├── reporting.py
 │   ├── runner.py
 │   └── s3_writer.py
-├── tests/
+├── output/
 ├── terraform/
 │   └── envs/
 │       └── dev/
@@ -134,7 +137,14 @@ aws-security-posture-scanner/
 │           ├── providers.tf
 │           ├── s3.tf
 │           └── variables.tf
+├── tests/
+│   ├── test_cloudtrail_checks.py
+│   ├── test_iam_checks.py
+│   ├── test_models.py
+│   ├── test_reporting.py
+│   └── test_s3_checks.py
 ├── Dockerfile
+├── LICENSE
 ├── Makefile
 ├── pyproject.toml
 └── README.md
