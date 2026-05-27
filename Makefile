@@ -26,6 +26,9 @@ format:
 test:
 	pytest
 
+.PHONY: setup
+setup: install lint format test
+
 .PHONY: run
 run:
 	python -m app.main
@@ -63,8 +66,8 @@ ecr-login:
 container-push-ecr:
 	podman push $(ECR_IMAGE_URI)
 
-.PHONY: container-release-ecr
-container-release-ecr: ecr-login container-build-ecr container-push-ecr
+.PHONY: container-release
+container-release: ecr-login container-build-ecr container-push-ecr
 
 .PHONY: ecs-run-task
 ecs-run-task:
