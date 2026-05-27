@@ -39,3 +39,43 @@ def test_generate_finding_id_changes_when_resource_changes() -> None:
     )
 
     assert finding_id_1 != finding_id_2
+
+
+def test_generate_finding_id_normalizes_service_casing() -> None:
+    finding_id_1 = generate_finding_id(
+        account_id="123456789012",
+        region="us-east-1",
+        service="s3",
+        check_id="S3_PUBLIC_ACCESS_BLOCK_DISABLED",
+        resource_id="example-bucket",
+    )
+
+    finding_id_2 = generate_finding_id(
+        account_id="123456789012",
+        region="us-east-1",
+        service="S3",
+        check_id="S3_PUBLIC_ACCESS_BLOCK_DISABLED",
+        resource_id="example-bucket",
+    )
+
+    assert finding_id_1 == finding_id_2
+
+
+def test_generate_finding_id_normalizes_check_id_casing() -> None:
+    finding_id_1 = generate_finding_id(
+        account_id="123456789012",
+        region="us-east-1",
+        service="s3",
+        check_id="S3_PUBLIC_ACCESS_BLOCK_DISABLED",
+        resource_id="example-bucket",
+    )
+
+    finding_id_2 = generate_finding_id(
+        account_id="123456789012",
+        region="us-east-1",
+        service="s3",
+        check_id="s3_public_access_block_disabled",
+        resource_id="example-bucket",
+    )
+
+    assert finding_id_1 == finding_id_2
