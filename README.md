@@ -21,6 +21,15 @@ Current development focuses on disciplined architecture, explicit contracts, and
 - Local JSON report persistence
 - Modular service-scoped check architecture
 
+### Implemented Security Checks
+
+- S3 Public Access Block validation
+- IAM root MFA enforcement
+- IAM password policy validation
+- CloudTrail multi-region trail detection
+- CloudTrail logging status validation
+- CloudTrail log file validation enforcement
+
 ### Report Storage and Logging
 
 - Optional S3 report upload
@@ -54,6 +63,10 @@ Current development focuses on disciplined architecture, explicit contracts, and
 - Makefile-based development workflows
 - ECR container push workflow
 - ECS task execution automation
+- GitHub Actions CI pipeline
+- Automated Ruff lint validation
+- Automated pytest execution
+- Terraform formatting validation
 
 ---
 
@@ -167,6 +180,46 @@ Equivalent manual installation:
 
 ```bash
 pip install -e ".[dev]"
+```
+
+---
+
+## Testing
+
+The project uses pytest-based unit testing with lightweight mocked AWS clients and deterministic validation behavior.
+
+Current test coverage includes:
+
+- deterministic finding ID generation
+- S3 security checks
+- IAM security checks
+- CloudTrail security checks
+- report generation and serialization
+- error handling behavior
+
+Run tests locally:
+
+```bash
+make test
+```
+
+---
+
+## Continuous Integration
+
+The repository uses GitHub Actions for lightweight continuous integration validation.
+
+Current CI pipeline responsibilities include:
+
+- Python dependency installation
+- Ruff lint validation
+- Pytest execution
+- Terraform formatting validation
+
+Current CI workflow location:
+
+```text
+.github/workflows/ci.yml
 ```
 
 ---
@@ -454,7 +507,7 @@ ECS task definitions use the `awslogs` log driver to emit runtime logs into this
 - Additional AWS service checks
 - Structured JSON logging
 - CloudWatch metrics and alarms
-- CI/CD pipeline integration
+- Container build validation in CI
 - Expanded Terraform infrastructure
 - Multi-region scanning support
 
