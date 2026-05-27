@@ -28,7 +28,9 @@ class FakeSession:
 
 
 class FakeIamClient:
-    def __init__(self, *, account_mfa_enabled=1, password_policy=None, summary_error=None, policy_error=None):
+    def __init__(
+        self, *, account_mfa_enabled=1, password_policy=None, summary_error=None, policy_error=None
+    ):
         self.account_mfa_enabled = account_mfa_enabled
         self.password_policy = password_policy or compliant_password_policy()
         self.summary_error = summary_error
