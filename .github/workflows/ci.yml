@@ -23,3 +23,9 @@ jobs:
 
       - name: Test
         run: make test
+
+      - name: Terraform format check
+        run: make terraform-fmt
+
+      - name: Terraform validate
+        run: make terraform-validate  
