@@ -101,6 +101,10 @@ terraform-destroy:
 terraform-fmt:
 	terraform -chdir=terraform fmt -recursive
 
+.PHONY: terraform-fmt-check
+terraform-fmt-check:
+	terraform -chdir=terraform fmt -check -recursive
+
 .PHONY: clean
 clean:
 	rm -rf output .pytest_cache .ruff_cache

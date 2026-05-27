@@ -15,6 +15,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.6"
+
       - name: Install dependencies
         run: make install
 
@@ -25,7 +30,7 @@ jobs:
         run: make test
 
       - name: Terraform format check
-        run: make terraform-fmt
+        run: make terraform-fmt-check
 
       - name: Terraform validate
         run: make terraform-validate  
