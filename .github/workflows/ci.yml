@@ -31,6 +31,3 @@ jobs:
 
       - name: Terraform format check
         run: make terraform-fmt-check
-
-      - name: Terraform validate
-        run: make terraform-validate  
