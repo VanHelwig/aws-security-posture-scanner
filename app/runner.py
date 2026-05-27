@@ -3,7 +3,7 @@ import logging
 from app.models import AwsScanContext
 from app.aws_session import create_scan_context
 from app.reporting import build_report, utc_now, write_json_report
-from app.checks import iam, s3
+from app.checks import cloudtrail, iam, s3
 from app.config import settings
 from app.s3_writer import upload_json_report
 
@@ -45,6 +45,13 @@ def run_scan() -> AwsScanContext:
             session=context.session,
             account_id=context.account_id,
             region=None,
+        )
+    )
+    findings.extend(
+        cloudtrail.run(
+            session=context.session,
+            account_id=context.account_id,
+            region=context.regions[0] if context.regions else None,
         )
     )
 
