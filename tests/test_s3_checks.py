@@ -134,3 +134,43 @@ def test_finding_id_is_deterministic():
     assert findings_one[0].finding_id == findings_two[0].finding_id
 
     assert findings_one[0].finding_id == expected_finding_id
+
+
+def run_s3_check_with_location(location_constraint):
+    client = FakeS3Client(
+        public_access_block={
+            "BlockPublicAcls": False,
+            "BlockPublicPolicy": True,
+            "IgnorePublicAcls": True,
+            "RestrictPublicBuckets": True,
+        },
+        location_constraint=location_constraint,
+    )
+    session = FakeSession(client)
+
+    return s3_checks.run(
+        session,
+        account_id=ACCOUNT_ID,
+        region=None,
+    )
+
+
+def test_bucket_region_defaults_to_us_east_1_when_location_constraint_is_none():
+    findings = run_s3_check_with_location(None)
+
+    assert len(findings) == 1
+    assert findings[0].region == "us-east-1"
+
+
+def test_bucket_region_maps_eu_to_eu_west_1():
+    findings = run_s3_check_with_location("EU")
+
+    assert len(findings) == 1
+    assert findings[0].region == "eu-west-1"
+
+
+def test_bucket_region_preserves_normal_region():
+    findings = run_s3_check_with_location("us-west-2")
+
+    assert len(findings) == 1
+    assert findings[0].region == "us-west-2"
