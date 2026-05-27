@@ -105,7 +105,16 @@ terraform-fmt:
 terraform-fmt-check:
 	terraform -chdir=terraform fmt -check -recursive
 
-.PHONY: clean
-clean:
+.PHONY: clean-python
+clean-python:
 	rm -rf output .pytest_cache .ruff_cache
 	find . -type d -name "__pycache__" -prune -exec rm -rf {} +
+
+.PHONY: clean-containers
+clean-containers:
+	-podman rm -f $$(podman ps -aq --filter "ancestor=$(IMAGE_NAME):$(IMAGE_TAG)") 2>/dev/null || true
+	-podman rmi -f $(IMAGE_NAME):$(IMAGE_TAG) 2>/dev/null || true
+	-podman image prune -f 2>/dev/null || true
+
+.PHONY: clean-all
+clean-all: clean-python clean-containers
