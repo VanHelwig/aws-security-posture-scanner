@@ -10,6 +10,7 @@ ECR_IMAGE_TAG ?= latest
 ECR_IMAGE_URI := $(ECR_REGISTRY)/$(ECR_REPOSITORY):$(ECR_IMAGE_TAG)
 TERRAFORM_ENV_DIR := terraform/envs/$(ENVIRONMENT)
 
+# Local Commands
 .PHONY: install
 install:
 	pip install -e ".[dev]"
@@ -33,6 +34,7 @@ setup: install lint format test
 run:
 	python -m app.main
 
+# Container Commands
 .PHONY: container-build
 container-build:
 	podman build -t $(IMAGE_NAME):$(IMAGE_TAG) .
@@ -80,6 +82,7 @@ ecs-run-task:
 		--query 'tasks[0].taskArn' \
 		--output text
 
+# Terraform Commands
 .PHONY: terraform-init
 terraform-init:
 	terraform -chdir=$(TERRAFORM_ENV_DIR) init
@@ -108,6 +111,27 @@ terraform-fmt:
 terraform-fmt-check:
 	terraform -chdir=terraform fmt -check -recursive
 
+# Security Testing Commands
+.PHONY: security-sast
+security-sast:
+	bandit -r app -ll
+
+.PHONY: security-deps
+security-deps:
+	pip-audit
+
+.PHONY: container-scan
+container-scan:
+	trivy image \
+		--ignore-unfixed \
+		--severity HIGH,CRITICAL \
+		--exit-code 0 \
+		$(IMAGE_NAME):$(CI_IMAGE_TAG)
+
+.PHONY: security-all
+security-all: security-sast security-deps
+
+# Cleaning Commands
 .PHONY: clean-python
 clean-python:
 	rm -rf output .pytest_cache .ruff_cache

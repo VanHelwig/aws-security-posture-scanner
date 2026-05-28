@@ -29,5 +29,11 @@ jobs:
       - name: Test
         run: make test
 
+      - name: Security SAST
+        run: make security-sast 
+      
+      - name: Security Dependency Check
+        run: make security-deps
+
       - name: Terraform format check
         run: make terraform-fmt-check

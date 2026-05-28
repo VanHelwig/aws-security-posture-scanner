@@ -16,6 +16,8 @@ dependencies = [
 dev = [
     "pytest",
     "ruff",
+    "bandit",
+    "pip-audit",
 ]
 
 [project.scripts]
